@@ -2,7 +2,7 @@ from rest_framework import serializers
 from django.contrib.auth import get_user_model
 from tags.api.v1.serializers import TagSerializer
 
-# from accounts.models import Developer
+from accounts.models import Developer,Company
 
 User = get_user_model()
 
@@ -17,45 +17,60 @@ class CreateUserSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = User
-        fields = ['username', 'email', 'password', 'user_type']
-
-
-class CreateDeveloperSerializer(serializers.ModelSerializer):
-    # cv = serializers.FileField(required=True)
-    # tags = TagSerializer()
-
-    class Meta:
-        model = User
-        fields = ['cv', 'username', 'email', 'password', 'user_type', 'gender', 'tags', 'date_of_birth']
+        fields = ['username', 'email', 'password', 'user_type', 'gender', 'date_of_birth']
         extra_kwargs = {
             'password': {
                 'write_only': True,
                 'required': True,
             },
-            'cv': {
-                'required': True
-            },
-            'date_of_birht': {
+            'date_of_birth': {
                 'required': True
             }
         }
-        # depth = 1
 
     def create(self, validated_data):
         user = User(username=validated_data['username'],
                     email=validated_data['email'],
                     gender=validated_data['gender'],
                     user_type=validated_data['user_type'],
-                    cv=validated_data['cv'],
                     date_of_birth=validated_data['date_of_birth'])
 
         # user = User(**validated_data)
         print(validated_data)
         user.set_password(validated_data['password'])
         user.save()
-        user.tags.set(validated_data['tags'])
+        # user.tags.set(validated_data['tags'])
 
         return user
+
+
+class CreateDeveloperSerializer(serializers.ModelSerializer):
+    # user = CreateUserSerializer(read_only=True)
+
+    class Meta:
+        model = Developer
+        fields = ['cv']
+        extra_kwargs = {
+            'cv': {
+                'required': True
+            },
+        }
+        # depth = 1
+
+    def create(self, validated_data):
+        developer = Developer(
+            cv=validated_data['cv'],
+
+        )
+
+        # user = User(**validated_data)
+        print('frrsd')
+        # user.set_password(validated_data['password'])
+        # developer.user.set(validated_data['user'])
+        developer.save()
+        # developer.tags.set(validated_data['tags'])
+
+        return developer
 
 
 class CreateCompanySerializer(serializers.ModelSerializer):
@@ -65,13 +80,10 @@ class CreateCompanySerializer(serializers.ModelSerializer):
     # password = serializers.
 
     class Meta:
-        model = User
-        fields = ['username', 'email', 'password', 'user_type', 'gender', 'history', 'address', 'date_of_birth']
+        model = Company
+        fields = ['history', 'address']
         extra_kwargs = {
-            'password': {
-                'write_only': True,
-                'required': True,
-            },
+
             'history': {
                 'required': True,
 
@@ -80,22 +92,17 @@ class CreateCompanySerializer(serializers.ModelSerializer):
                 'required': True,
 
             },
-            'date_of_birht': {
-                'required': True
-            }
+
         }
 
     def create(self, validated_data):
-        user = User(username=validated_data['username'],
-                    email=validated_data['email'],
-                    gender=validated_data['gender'],
-                    user_type=validated_data['user_type'],
+        company = Company(
                     history=validated_data['history'],
                     address=validated_data['address'],
-                    date_of_birth=validated_data['date_of_birth'])
+                   )
 
         # user = User(**validated_data)
         print(validated_data)
-        user.set_password(validated_data['password'])
-        user.save()
-        return user
+        # user.set_password(validated_data['password'])
+        company.save()
+        return company
