@@ -31,8 +31,8 @@ class Job(models.Model):
     # applied_developers = models.CharField(max_length=30)
     #Many2Many with user model who has applied for it
 
-    developer = models.CharField(max_length=30)
-    created_by = models.CharField(max_length=30)
+    # developer = models.CharField(max_length=30)
+    # created_by = models.CharField(max_length=30)
     class status(models.TextChoices):
         OPEN = 'O', ('open')
         INPROGRESS = 'IN', ('inprogress')
