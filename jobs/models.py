@@ -25,7 +25,8 @@ class Job(models.Model):
     creation_time = models.DateTimeField(auto_now_add=True)
     Modification_time = models.DateTimeField(auto_now=True)
     Description = models.TextField(max_length=255)
-    # Tags= models.CharField(max_length=30)
+    tags = models.ManyToManyField('tags.tag')
+
     # many to many with tags model
 
     # applied_developers = models.CharField(max_length=30)
