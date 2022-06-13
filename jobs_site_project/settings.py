@@ -24,7 +24,7 @@ SECRET_KEY = 'django-insecure-=8torw)(^nta_wsi)s68sg)-e2he-by(ob_@=2o-)__49fk#cg
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['*']
 
 # Application definition
 
@@ -36,7 +36,9 @@ HELPER_APPS = ['django.contrib.admin',
                'django.contrib.messages',
                'django.contrib.staticfiles',
                'rest_framework',
-               'rest_framework.authtoken', ]
+               'rest_framework.authtoken',
+               "corsheaders",
+               ]
 PROJECT_APPS = ['accounts', 'jobs', 'tags']
 INSTALLED_APPS = HELPER_APPS + PROJECT_APPS
 MIDDLEWARE = [
@@ -47,6 +49,8 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    "corsheaders.middleware.CorsMiddleware",
+    "django.middleware.common.CommonMiddleware",
 ]
 
 ROOT_URLCONF = 'jobs_site_project.urls'
@@ -123,3 +127,22 @@ STATIC_URL = 'static/'
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 AUTH_USER_MODEL = 'accounts.User'
+
+# CORS_ORIGIN_ALLOW_ALL = True
+
+# CORS_ALLOWED_ORIGINS = [
+#
+#     "http://127.0.0.1:3000",
+# ]
+
+CORS_ORIGIN_ALLOW_ALL = True
+CORS_ALLOW_CREDENTIALS = True
+
+CORS_ALLOW_METHODS = [
+    "DELETE",
+    "GET",
+    "OPTIONS",
+    "PATCH",
+    "POST",
+    "PUT",
+]
