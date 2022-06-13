@@ -8,12 +8,13 @@ from rest_framework.decorators import api_view, permission_classes
 @permission_classes([])
 def signup(request):
     response = {'data': None, 'status': status.HTTP_400_BAD_REQUEST}
+    print(request.data)
     if (request.data['user_type'] == 'DEVELOPER'):
 
         serializer = CreateUserSerializer(data=request.data)
         print(request.data)
         if serializer.is_valid():
-
+            print('valid')
             # print(user)
             developer_serializer = CreateDeveloperSerializer(data=request.data)
             print(developer_serializer.is_valid())
@@ -49,5 +50,5 @@ def signup(request):
                 response['data'] = company_serializer.errors
         else:
             response['data'] = serializer.errors
-
+    print(Response(**response))
     return Response(**response)
