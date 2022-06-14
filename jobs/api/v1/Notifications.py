@@ -37,4 +37,16 @@ class Notifications():
         )
         email.fail_silently = True
         email.send()
+
+
+    def send_job_finished_mail(self):
+        template = render_to_string('./templates/job_finished.html')
+        email = EmailMessage(
+        'Job finished !',#subject
+        template,#body
+        settings.EMAIL_HOST_USER,#sender mail
+        ['adham.ahm.hassan@gmail.com'],#reciever mail (Recruiter whose job has been finished)
+        )
+        email.fail_silently = True
+        email.send()
             
