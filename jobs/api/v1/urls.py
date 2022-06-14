@@ -1,11 +1,11 @@
 from django.urls import path
 
-from . import views
+from jobs.api.v1.views import index, detail, create, edit, delete
 
 urlpatterns = [
-    path('list', views.index, name='index'),
-    path('detail/<id>', views.detail, name='detail'),
-    path('create', views.create, name='create'),
-    path('edit/<id>', views.edit, name='edit'),
-    path('delete/<id>', views.delete, name='delete'),
+    path('list', index, name='index'),
+    path('detail/<int:job_id>', detail, name='detail'),
+    path('create', create, name='create'),
+    path('edit/<int:job_id>', edit, name='edit'),
+    path('delete/<int:job_id>', delete, name='delete'),
 ]

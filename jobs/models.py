@@ -19,14 +19,18 @@ from django.db import models
 # -On Create Send notification to all developers who have tags matched
 # -On developer accept Notify accepted developer with acceptance & all other developers  with rejection
 # -On Job finish send notification to job owner
+from accounts.models import Company
+
+
 class Job(models.Model):
 
     name = models.CharField(max_length=30)
     creation_time = models.DateTimeField(auto_now_add=True)
     Modification_time = models.DateTimeField(auto_now=True)
     Description = models.TextField(max_length=255)
-    tags = models.ManyToManyField('tags.tag')
+    created_by = models.ForeignKey(Company, on_delete=models.CASCADE)
 
+    # Tags= models.CharField(max_length=30)
     # many to many with tags model
 
     # applied_developers = models.CharField(max_length=30)

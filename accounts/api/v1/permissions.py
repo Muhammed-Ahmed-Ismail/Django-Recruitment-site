@@ -19,9 +19,15 @@ from rest_framework.permissions import BasePermission
 ###
 
 # company and developer permission
+from jobs.models import Job
+
+
 class CompDevJobsPermission(BasePermission):
     def has_permission(self, request, view):
-        if request.user.user_type == 'DEVELOPER':
+        if (
+                request.user.user_type == 'DEVELOPER' or
+                request.user.user_type == 'COMPANY'
+        ):
             return True
         return False
 
@@ -30,8 +36,8 @@ class CompDevJobsPermission(BasePermission):
 class CompGetMyJobsPermission(BasePermission):
     def has_permission(self, request, view):
         if (
-                request.user.user_type == 'DEVELOPER' and
-                request.user.username == request.jobs.created_by
+                request.user.user_type == 'DEVELOPER'
+                # and request.user.id == view.kwargs
         ):
             return True
         return False
@@ -40,12 +46,20 @@ class CompGetMyJobsPermission(BasePermission):
 # edit, delete, mark done
 class CompEditMyJopPermission(BasePermission):
     def has_permission(self, request, view):
+        # try:
+        job_id = view.kwargs.get('job_id')
+        job = Job.objects.filter(id=job_id).first()
+        print(type(request.user))
+        print(request.user.user_type)
         if (
-                request.user.user_type == 'DEVELOPER' and
-                request.user.username == request.job.created_by
+                request.user and
+                request.user.user_type == 'COMPANY' and
+                request.user.id == job.created_by.user.id
         ):
             return True
-        return False
+        # return False
+        # except:
+        #     return False
 
 
 ###
