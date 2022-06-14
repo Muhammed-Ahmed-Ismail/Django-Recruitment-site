@@ -4,8 +4,7 @@ from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from jobs.models import Job
 from jobs.api.v1.serializer import JobSerializer
-
-@api_view(['GET'])
+from jobs.api.v1.Notifications import Notifications
 def index(request):
     try:
         querySet=Job.objects.all()
@@ -23,6 +22,8 @@ def detail(request,id):
     except:
         return Response({"status":"Job doesn't exxit"})
 
+
+
 @api_view(['POST'])
 def create(request):
     serializer=JobSerializer(data=request.data)
@@ -31,32 +32,34 @@ def create(request):
     body=request.data
 
     query_set=Job.objects.create(
+        # status='O',
         name=body['name'],
         Description= body['Description'],
         # Tags = body['tags'],
-        developer = body['developer'],
-        created_by = body['created_by']
+        # developer = body['developer'],
+        ## ^^ notify accepted developer and all the others notify with rejection
+        # created_by = body['created_by']
     )
     serializer=JobSerializer(query_set)
+##########send notification to all developers who have matched tags
+    notifications = Notifications()
+    # notifications.send_mail_to_devs_w_matching_tags(Tags)
     return Response(serializer.data)
 
 @api_view(['PUT'])
 def edit(request,id):
-#getting request data
     body=request.data
     name=body['name'],
     Description= body['description'],
     # Tags = body['tags'],
     developer = body['developer'],
     created_by = body['created_by']
-#checking if data is sent then updating 
     job = Job.objects.get(pk = id)
     job.name = name if name else job.name
     job.Description = Description if Description else job.Description
     # job.Tags = Tags if Tags else job.Tags
     job.developer = developer if developer else job.developer
     job.created_by = created_by if created_by else job.created_by
-#saving changes and sending data 
     job.save()
     serializer=JobSerializer(job)
     return Response(serializer.data)

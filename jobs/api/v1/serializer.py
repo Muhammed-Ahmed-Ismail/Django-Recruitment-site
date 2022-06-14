@@ -9,17 +9,17 @@ class JobSerializer(serializers.ModelSerializer):
   
     class Meta:
         model=Job
-        fields='__all__'
+        # fields='__all__'
 
-#         [
-#         'name',
-#         'creation_time',
-#         'Modification_time',
-#         'Description',
-#         # 'tags' ,
-#         # 'applied_developers',
-#         'developer',
-#         'created_by' ,
-#         'status' ,
-        # ]
+        fields=[
+        'name',
+        # 'creation_time',
+        # 'Modification_time',
+        'Description',
+        # 'tags' ,
+        # 'applied_developers',
+        # 'developer',
+        # 'created_by' ,
+        # 'status' ,
+        ]
 
