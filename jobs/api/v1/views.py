@@ -3,13 +3,14 @@ from rest_framework.decorators import api_view, permission_classes
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
 
-from accounts.api.v1.permissions import CompEditMyJopPermission
+from accounts.api.v1.permissions import CompEditMyJopPermission, CompCreateJobPermission
 from jobs.models import Job
 from jobs.api.v1.serializer import JobSerializer
 from rest_framework import status
 
 
 @api_view(['GET'])
+@permission_classes([])
 def index(request):
     try:
         queryset = Job.objects.all()
@@ -20,6 +21,7 @@ def index(request):
 
 
 @api_view(['GET'])
+@permission_classes([])
 def detail(request, job_id):
     response = {'data': {}, 'status': status.HTTP_404_NOT_FOUND}
     try:
@@ -38,6 +40,7 @@ def detail(request, job_id):
 
 
 @api_view(['POST'])
+@permission_classes([IsAuthenticated, CompCreateJobPermission])
 def create(request):
     response = {'data': {}, 'status': status.HTTP_400_BAD_REQUEST}
     try:
@@ -60,12 +63,12 @@ def create(request):
 def edit(request, job_id):
     response = {'data': {}, 'status': status.HTTP_400_BAD_REQUEST}
     try:
-        movie_instance = Job.objects.get(id=job_id)
+        job_instance = Job.objects.get(id=job_id)
 
         if request.method == 'PUT':
-            serializer = JobSerializer(instance=movie_instance, data=request.data)
+            serializer = JobSerializer(instance=job_instance, data=request.data)
         else:  # PATCH
-            serializer = JobSerializer(instance=movie_instance, data=request.data, partial=True)
+            serializer = JobSerializer(instance=job_instance, data=request.data, partial=True)
 
         if serializer.is_valid():
             serializer.save()
@@ -81,6 +84,7 @@ def edit(request, job_id):
 
 
 @api_view(['DELETE'])
+@permission_classes([IsAuthenticated, CompEditMyJopPermission])
 def delete(request, actor_id):
     response = {'data': {}, 'status': status.HTTP_400_BAD_REQUEST}
     try:
