@@ -1,6 +1,9 @@
 from django.core.exceptions import ObjectDoesNotExist
-from rest_framework.decorators import api_view
+from rest_framework.decorators import api_view, permission_classes
 from rest_framework.response import Response
+from rest_framework.permissions import IsAuthenticated
+
+from accounts.api.v1.permissions import CompEditMyJopPermission
 from jobs.models import Job
 from jobs.api.v1.serializer import JobSerializer
 from rest_framework import status
@@ -53,6 +56,7 @@ def create(request):
 
 
 @api_view(['PUT', 'PATCH'])
+@permission_classes([IsAuthenticated, CompEditMyJopPermission])
 def edit(request, job_id):
     response = {'data': {}, 'status': status.HTTP_400_BAD_REQUEST}
     try:
