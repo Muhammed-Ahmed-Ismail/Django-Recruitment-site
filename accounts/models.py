@@ -1,7 +1,6 @@
 from django.contrib.auth.models import AbstractUser
 # from jobs.models import Job
 from django.db import models
-from .Notifications import send_acceptance_mail, send_rejection_mail
 
 
 class User(AbstractUser):
