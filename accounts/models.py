@@ -31,3 +31,6 @@ class Company(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE, null=True)
     history = models.CharField(max_length=500, null=True)
     address = models.CharField(max_length=100, null=True)
+
+    def __str__ (self):
+        return self.user.username
