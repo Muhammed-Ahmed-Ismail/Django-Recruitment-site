@@ -1,5 +1,5 @@
 from django.contrib.auth.models import AbstractUser
-from jobs.models import Job
+# from jobs.models import Job
 from django.db import models
 
 
@@ -20,7 +20,7 @@ class User(AbstractUser):
 
 class Developer(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE, null=True)
-    job = models.ManyToManyField(Job)
+    # job = models.ManyToManyField('jobs.job')
     cv = models.FileField(upload_to='static/cv', null=True)
     tags = models.ManyToManyField('tags.tag')
     can_apply = models.BooleanField(default=True)
@@ -31,4 +31,3 @@ class Company(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE, null=True)
     history = models.CharField(max_length=500, null=True)
     address = models.CharField(max_length=100, null=True)
-    created_job = models.ManyToManyField(Job)
