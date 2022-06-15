@@ -12,15 +12,7 @@ class JobSerializer(serializers.ModelSerializer):
         fields = '__all__'
         depth = 2
 
-#         [
-#         'name',
-#         'creation_time',
-#         'Modification_time',
-#         'Description',
-#         # 'tags' ,
-#         # 'applied_developers',
-#         'developer',
-#         'created_by' ,
-#         'status' ,
-# ]
-
+class JobCreateEditSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Job
+        fields = ('name', 'Description', 'image', 'created_by', 'status',)
