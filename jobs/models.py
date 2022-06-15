@@ -23,7 +23,6 @@ from accounts.models import Company
 
 
 class Job(models.Model):
-
     name = models.CharField(max_length=30)
     creation_time = models.DateTimeField(auto_now_add=True)
     Modification_time = models.DateTimeField(auto_now=True)
@@ -34,17 +33,21 @@ class Job(models.Model):
     # many to many with tags model
 
     # applied_developers = models.CharField(max_length=30)
-    #Many2Many with user model who has applied for it
+    # Many2Many with user model who has applied for it
 
     # developer = models.CharField(max_length=30)
     # created_by = models.CharField(max_length=30)
-    class status(models.TextChoices):
-        OPEN = 'O', ('open')
-        INPROGRESS = 'IN', ('inprogress')
-        FINISHED = 'F', ('finished')
+
+    image = models.CharField(max_length=255, default='https://dummyimage.com/200x300/000/ffffff')
+    created_by = models.ForeignKey(Company, on_delete=models.CASCADE)
+
+    class Status(models.TextChoices):
+        OPEN = 'O', 'open'
+        INPROGRESS = 'IN', 'inprogress'
+        FINISHED = 'F', 'finished'
 
     status = models.CharField(
         max_length=2,
-        choices=status.choices,
-        default=status.OPEN,
+        choices=Status.choices,
+        default=Status.OPEN,
     )

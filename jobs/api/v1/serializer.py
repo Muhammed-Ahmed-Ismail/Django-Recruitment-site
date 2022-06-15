@@ -7,8 +7,10 @@ from jobs.models import Job
 
 class JobSerializer(serializers.ModelSerializer):
     class Meta:
+
         model = Job
         fields = '__all__'
+        depth = 1
 
 #         [
 #         'name',
@@ -21,3 +23,4 @@ class JobSerializer(serializers.ModelSerializer):
 #         'created_by' ,
 #         'status' ,
 # ]
+

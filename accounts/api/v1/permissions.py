@@ -22,6 +22,7 @@ from rest_framework.permissions import BasePermission
 from jobs.models import Job
 
 
+# Both company and developer can see listed jobs
 class CompDevJobsPermission(BasePermission):
     def has_permission(self, request, view):
         if (
@@ -32,12 +33,22 @@ class CompDevJobsPermission(BasePermission):
         return False
 
 
+# only companies create jobs
+class CompCreateJobPermission(BasePermission):
+    def has_permission(self, request, view):
+        if request.user.user_type == 'COMPANY':
+            return True
+        return False
+
+
 # get this company jobs (doesn't make sense, but it is a requirement)
 class CompGetMyJobsPermission(BasePermission):
     def has_permission(self, request, view):
+        job_id = view.kwargs.get('job_id')
+        job = Job.objects.filter(id=job_id).first()
         if (
                 request.user.user_type == 'DEVELOPER'
-                # and request.user.id == view.kwargs
+                and request.user.id == job.created_by.user.id
         ):
             return True
         return False
@@ -46,20 +57,15 @@ class CompGetMyJobsPermission(BasePermission):
 # edit, delete, mark done
 class CompEditMyJopPermission(BasePermission):
     def has_permission(self, request, view):
-        # try:
         job_id = view.kwargs.get('job_id')
         job = Job.objects.filter(id=job_id).first()
-        print(type(request.user))
-        print(request.user.user_type)
         if (
                 request.user and
                 request.user.user_type == 'COMPANY' and
                 request.user.id == job.created_by.user.id
         ):
             return True
-        # return False
-        # except:
-        #     return False
+        return False
 
 
 ###
@@ -78,9 +84,12 @@ class DevApplyForJobPermission(BasePermission):
 
 class DevMarkJobDonePermission(BasePermission):
     def has_permission(self, request, view):
+        job_id = view.kwargs.get('job_id')
+        job = Job.objects.filter(id=job_id)
         if (
-                request.user.user_type == 'DEVELOPER' and
-                request.user.username == request.job.selected_dev
+                request.user.user_type == 'DEVELOPER'
+                # and
+                # request.user.username == job.
         ):
             return True
         return False
