@@ -2,15 +2,17 @@ from django.core.exceptions import ObjectDoesNotExist
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
+from rest_framework import status
 
 from accounts.api.v1.permissions import CompEditMyJopPermission, CompCreateJobPermission
 from jobs.models import Job
 from jobs.api.v1.serializer import JobSerializer, JobCreateEditSerializer
-from rest_framework import status
+from jobs.api.v1.Notifications import Notifications
 
 
 @api_view(['GET'])
 @permission_classes([])
+
 def index(request):
     try:
         queryset = Job.objects.all()
@@ -39,6 +41,8 @@ def detail(request, job_id):
         return Response(**response)
 
 
+
+
 @api_view(['POST'])
 @permission_classes([IsAuthenticated, CompCreateJobPermission])
 def create(request):
@@ -57,6 +61,23 @@ def create(request):
         response['status'] = status.HTTP_500_INTERNAL_SERVER_ERROR
     finally:
         return Response(**response)
+
+
+    query_set=Job.objects.create(
+        # status='O',
+        name=body['name'],
+        Description= body['Description'],
+        # Tags = body['tags'],
+        # developer = body['developer'],
+        ## ^^ notify accepted developer and all the others notify with rejection
+        # created_by = body['created_by']
+    )
+    serializer=JobSerializer(query_set)
+##########send notification to all developers who have matched tags
+    notifications = Notifications()
+    # notifications.send_mail_to_devs_w_matching_tags(Tags)
+    return Response(serializer.data)
+
 
 
 @api_view(['PUT', 'PATCH'])

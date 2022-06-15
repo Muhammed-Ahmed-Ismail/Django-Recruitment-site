@@ -7,10 +7,10 @@ from jobs.models import Job
 
 class JobSerializer(serializers.ModelSerializer):
     class Meta:
+
         model = Job
         fields = '__all__'
         depth = 2
-
 
 class JobCreateEditSerializer(serializers.ModelSerializer):
     class Meta:
