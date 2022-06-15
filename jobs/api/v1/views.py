@@ -41,10 +41,7 @@ def create(request):
         # created_by = body['created_by']
     )
     serializer=JobSerializer(query_set)
-<<<<<<< HEAD
-=======
 ##########send notification to all developers who have matched tags
->>>>>>> 2ae8c9a (notification class and templates for emails added)
     notifications = Notifications()
     # notifications.send_mail_to_devs_w_matching_tags(Tags)
     return Response(serializer.data)
