@@ -1,35 +1,67 @@
-from django.http import HttpResponse
-from django.shortcuts import render
-from rest_framework.decorators import api_view
+from django.core.exceptions import ObjectDoesNotExist
+from rest_framework.decorators import api_view, permission_classes
 from rest_framework.response import Response
+from rest_framework.permissions import IsAuthenticated
+
+from accounts.api.v1.permissions import CompEditMyJopPermission, CompCreateJobPermission
 from jobs.models import Job
 from jobs.api.v1.serializer import JobSerializer
+
 from jobs.api.v1.Notifications import Notifications
-def index(request):
-    try:
-        querySet=Job.objects.all()
-        serializer=JobSerializer(querySet,many=True)
-        return Response(serializer.data)
-    except:
-        return Response({"status":"No jobs exist"})
+from rest_framework import status
+
 
 @api_view(['GET'])
-def detail(request,id):
+@permission_classes([])
+
+def index(request):
     try:
-        querySet=Job.objects.get(pk=id)
-        serializer=JobSerializer(querySet)
-        return Response(serializer.data)
+        queryset = Job.objects.all()
+        serializer = JobSerializer(queryset, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
     except:
-        return Response({"status":"Job doesn't exxit"})
+        return Response({"status": "No jobs exist"}, status=status.HTTP_404_NOT_FOUND)
+
+
+@api_view(['GET'])
+@permission_classes([])
+def detail(request, job_id):
+    response = {'data': {}, 'status': status.HTTP_404_NOT_FOUND}
+    try:
+        actor = Job.objects.get(id=job_id)
+        serializer = JobSerializer(actor, many=False)
+        response['data'] = serializer.data
+        response['status'] = status.HTTP_200_OK
+    except ObjectDoesNotExist:
+        response['data'] = {'not found'}
+        response['status'] = status.HTTP_204_NO_CONTENT
+    except:
+        response['data'] = {'server error'}
+        response['status'] = status.HTTP_500_INTERNAL_SERVER_ERROR
+    finally:
+        return Response(**response)
+
 
 
 
 @api_view(['POST'])
+@permission_classes([IsAuthenticated, CompCreateJobPermission])
 def create(request):
-    serializer=JobSerializer(data=request.data)
-    serializer.is_valid(raise_exception=True)
-    serializer.validated_data
-    body=request.data
+    response = {'data': {}, 'status': status.HTTP_400_BAD_REQUEST}
+    try:
+        serializer = JobSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            response['data'] = serializer.data
+            response['status'] = status.HTTP_200_OK
+        else:
+            response['data'] = serializer.errors
+    except:
+        response['data'] = {'server error'}
+        response['status'] = status.HTTP_500_INTERNAL_SERVER_ERROR
+    finally:
+        return Response(**response)
+
 
     query_set=Job.objects.create(
         # status='O',
@@ -46,30 +78,43 @@ def create(request):
     # notifications.send_mail_to_devs_w_matching_tags(Tags)
     return Response(serializer.data)
 
-@api_view(['PUT'])
-def edit(request,id):
-    body=request.data
-    name=body['name'],
-    Description= body['description'],
-    # Tags = body['tags'],
-    developer = body['developer'],
-    created_by = body['created_by']
-    job = Job.objects.get(pk = id)
-    job.name = name if name else job.name
-    job.Description = Description if Description else job.Description
-    # job.Tags = Tags if Tags else job.Tags
-    job.developer = developer if developer else job.developer
-    job.created_by = created_by if created_by else job.created_by
-    job.save()
-    serializer=JobSerializer(job)
-    return Response(serializer.data)
+
+
+@api_view(['PUT', 'PATCH'])
+@permission_classes([IsAuthenticated, CompEditMyJopPermission])
+def edit(request, job_id):
+    response = {'data': {}, 'status': status.HTTP_400_BAD_REQUEST}
+    try:
+        job_instance = Job.objects.get(id=job_id)
+
+        if request.method == 'PUT':
+            serializer = JobSerializer(instance=job_instance, data=request.data)
+        else:  # PATCH
+            serializer = JobSerializer(instance=job_instance, data=request.data, partial=True)
+
+        if serializer.is_valid():
+            serializer.save()
+            response['data'] = serializer.data
+            response['status'] = status.HTTP_200_OK
+        else:
+            response['data'] = serializer.errors
+    except:
+        response['data'] = {'bad request'}
+        response['status'] = status.HTTP_400_BAD_REQUEST
+    finally:
+        return Response(**response)
+
 
 @api_view(['DELETE'])
-def delete(request,id):
+@permission_classes([IsAuthenticated, CompEditMyJopPermission])
+def delete(request, actor_id):
+    response = {'data': {}, 'status': status.HTTP_400_BAD_REQUEST}
     try:
-        emp = Job.objects.get(pk = id)
-        emp.delete()
-    except :
-        return Response({"status":"record does not exist"})
-        
-    return Response({"status":"Deleted Successfully"})
+        Job.objects.get(id=actor_id).delete()
+        response['data'] = {'deleted'}
+        response['status'] = status.HTTP_204_NO_CONTENT
+    except ObjectDoesNotExist:
+        response['data'] = {'not found'}
+        response['status'] = status.HTTP_404_NOT_FOUND
+    finally:
+        return Response(**response)
