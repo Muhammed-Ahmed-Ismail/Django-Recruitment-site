@@ -57,4 +57,9 @@ class Job(models.Model):
         self.save()
 
     def assign_to_developer(self, developer):
+        print('from assign',developer)
+        refused_developers = list(filter(lambda d: d.id != developer.id, self.applied_developer.all()))
+        developer.get_accepted()
+        for developer in refused_developers:
+            developer.get_rejected()
         pass

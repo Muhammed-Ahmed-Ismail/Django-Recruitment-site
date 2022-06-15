@@ -5,6 +5,7 @@ from rest_framework.permissions import IsAuthenticated
 
 from accounts.api.v1.permissions import CompEditMyJopPermission, CompCreateJobPermission, DevApplyForJobPermission, \
     DevCanApply
+from accounts.models import Developer
 from jobs.models import Job
 from jobs.api.v1.serializer import JobSerializer
 
@@ -124,8 +125,7 @@ def apply(request, job_id):
     try:
         job = Job.objects.get(id=job_id)
         applying_developer = request.user.developer
-        applying_developer.apply()
-        job.add_new_application(applying_developer)
+        applying_developer.apply(job)
         response['data'] = {'Application succeeded'}
         response['status'] = status.HTTP_200_OK
     except ObjectDoesNotExist:
@@ -141,4 +141,19 @@ def apply(request, job_id):
 @api_view(['POST'])
 @permission_classes([IsAuthenticated, CompEditMyJopPermission])
 def assign(request, job_id, dev_id):
-    job = Job.objects.get(id=job_id)
+    response = {'data': {}, 'status': status.HTTP_404_NOT_FOUND}
+    try:
+        job = Job.objects.get(id=job_id)
+        developer = job.applied_developer.get(id=dev_id)
+        print(developer)
+        job.assign_to_developer(developer)
+        response['data'] = {'Developer has been sent a mail for acceptance'}
+        response['status'] = status.HTTP_200_OK
+    except ObjectDoesNotExist:
+        response['data'] = {'not found'}
+        response['status'] = status.HTTP_204_NO_CONTENT
+    except:
+        response['data'] = {'server error'}
+        response['status'] = status.HTTP_500_INTERNAL_SERVER_ERROR
+    finally:
+        return Response(**response)
