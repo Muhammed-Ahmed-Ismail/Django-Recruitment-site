@@ -5,7 +5,7 @@ from rest_framework.permissions import IsAuthenticated
 
 from accounts.api.v1.permissions import CompEditMyJopPermission, CompCreateJobPermission
 from jobs.models import Job
-from jobs.api.v1.serializer import JobSerializer
+from jobs.api.v1.serializer import JobSerializer, JobCreateEditSerializer
 from rest_framework import status
 
 
@@ -44,7 +44,8 @@ def detail(request, job_id):
 def create(request):
     response = {'data': {}, 'status': status.HTTP_400_BAD_REQUEST}
     try:
-        serializer = JobSerializer(data=request.data)
+        serializer = JobCreateEditSerializer(data=request.data)
+        print(serializer)
         if serializer.is_valid():
             serializer.save()
             response['data'] = serializer.data
@@ -66,9 +67,9 @@ def edit(request, job_id):
         job_instance = Job.objects.get(id=job_id)
 
         if request.method == 'PUT':
-            serializer = JobSerializer(instance=job_instance, data=request.data)
+            serializer = JobCreateEditSerializer(instance=job_instance, data=request.data)
         else:  # PATCH
-            serializer = JobSerializer(instance=job_instance, data=request.data, partial=True)
+            serializer = JobCreateEditSerializer(instance=job_instance, data=request.data, partial=True)
 
         if serializer.is_valid():
             serializer.save()
