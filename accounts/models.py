@@ -42,7 +42,7 @@ class Developer(models.Model):
         self.free()
 
     def notify(self):
-
+        pass
 
 class Company(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE, null=True)

@@ -23,11 +23,21 @@ from accounts.models import Company
 
 
 class Job(models.Model):
+    class Status(models.TextChoices):
+        OPEN = 'O', 'open'
+        INPROGRESS = 'IN', 'inprogress'
+        FINISHED = 'F', 'finished'
+
     name = models.CharField(max_length=30)
     creation_time = models.DateTimeField(auto_now_add=True)
     Modification_time = models.DateTimeField(auto_now=True)
     Description = models.TextField(max_length=255)
     created_by = models.ForeignKey(Company, on_delete=models.CASCADE)
+    status = models.CharField(
+        max_length=2,
+        choices=Status.choices,
+        default=Status.OPEN,
+    )
 
     # Tags= models.CharField(max_length=30)
     # many to many with tags model
@@ -46,16 +56,5 @@ class Job(models.Model):
         self.applied_developer.add(developer)
         self.save()
 
-    def assign_to_developer(self,developer):
-
-
-    class Status(models.TextChoices):
-        OPEN = 'O', 'open'
-        INPROGRESS = 'IN', 'inprogress'
-        FINISHED = 'F', 'finished'
-
-    status = models.CharField(
-        max_length=2,
-        choices=Status.choices,
-        default=Status.OPEN,
-    )
+    def assign_to_developer(self, developer):
+        pass
