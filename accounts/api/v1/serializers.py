@@ -1,3 +1,6 @@
+from dataclasses import fields
+from pyexpat import model
+from statistics import mode
 from rest_framework import serializers
 from django.contrib.auth import get_user_model
 from tags.api.v1.serializers import TagSerializer
@@ -106,3 +109,28 @@ class CreateCompanySerializer(serializers.ModelSerializer):
         # user.set_password(validated_data['password'])
         company.save()
         return company
+
+class GetDeveloperSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Developer
+        fields = ['cv']
+
+class UserSerializerForDeveloper(serializers.ModelSerializer):
+    developer = GetDeveloperSerializer()
+    class Meta:
+        model = User
+        fields = ['username','first_name','last_name','last_login','email','user_type','gender','date_of_birth','developer']
+
+class GetCompanySerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Company
+        fields = ['history','address']
+
+class UserSerializerForCompany(serializers.ModelSerializer):
+    company = GetCompanySerializer()
+    class Meta:
+        model = User
+        fields = ['username','first_name','last_name','last_login','email','user_type','gender','date_of_birth','company']
+
+
+
