@@ -26,11 +26,28 @@ class Developer(models.Model):
     can_apply = models.BooleanField(default=True)
     notify_by_mail = models.BooleanField(null=True)
 
+    def apply(self):
+        self.can_apply = False
+        self.save()
+
+    def free(self):
+        self.can_apply = True
+        self.save()
+
+    def get_accepted(self):
+
+        pass
+
+    def get_regected(self):
+        self.free()
+
+    def notify(self):
+
 
 class Company(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE, null=True)
     history = models.CharField(max_length=500, null=True)
     address = models.CharField(max_length=100, null=True)
 
-    def __str__ (self):
+    def __str__(self):
         return self.user.username

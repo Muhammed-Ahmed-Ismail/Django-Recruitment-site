@@ -40,6 +40,14 @@ class Job(models.Model):
 
     image = models.CharField(max_length=255, default='https://dummyimage.com/200x300/000/ffffff')
     created_by = models.ForeignKey(Company, on_delete=models.CASCADE)
+    applied_developer = models.ManyToManyField('accounts.developer', null=True, blank=True)
+
+    def add_new_application(self, developer):
+        self.applied_developer.add(developer)
+        self.save()
+
+    def assign_to_developer(self,developer):
+
 
     class Status(models.TextChoices):
         OPEN = 'O', 'open'

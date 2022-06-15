@@ -3,12 +3,13 @@ from rest_framework.decorators import api_view, permission_classes
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
 
-from accounts.api.v1.permissions import CompEditMyJopPermission, CompCreateJobPermission
+from accounts.api.v1.permissions import CompEditMyJopPermission, CompCreateJobPermission,DevApplyForJobPermission,DevCanApply
 from jobs.models import Job
 from jobs.api.v1.serializer import JobSerializer
 
 from jobs.api.v1.Notifications import Notifications
 from rest_framework import status
+
 
 
 @api_view(['GET'])
@@ -118,3 +119,27 @@ def delete(request, actor_id):
         response['status'] = status.HTTP_404_NOT_FOUND
     finally:
         return Response(**response)
+@api_view(['POST'])
+@permission_classes([IsAuthenticated, DevApplyForJobPermission,DevCanApply])
+def apply(request,job_id):
+    response = {'data': {}, 'status': status.HTTP_404_NOT_FOUND}
+    try:
+        job = Job.objects.get(id=job_id)
+        applying_developer = request.user.developer
+        applying_developer.apply()
+        job.add_new_application(applying_developer)
+        response['data'] = {'Application succeeded'}
+        response['status'] = status.HTTP_200_OK
+    except ObjectDoesNotExist:
+        response['data'] = {'not found'}
+        response['status'] = status.HTTP_204_NO_CONTENT
+    except:
+        response['data'] = {'server error'}
+        response['status'] = status.HTTP_500_INTERNAL_SERVER_ERROR
+    finally:
+        return Response(**response)
+
+@api_view('POST')
+@permission_classes([IsAuthenticated, CompEditMyJopPermission])
+def assign(request,job_id,dev_id):
+    job = Job.objects.get(id=job_id)

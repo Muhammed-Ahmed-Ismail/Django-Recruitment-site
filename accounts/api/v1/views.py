@@ -14,8 +14,7 @@ def signup(request):
         serializer = CreateUserSerializer(data=request.data)
         print(request.data)
         if serializer.is_valid():
-            print('valid')
-            # print(user)
+
             developer_serializer = CreateDeveloperSerializer(data=request.data)
             print(developer_serializer.is_valid())
             if developer_serializer.is_valid():

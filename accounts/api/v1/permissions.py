@@ -93,3 +93,10 @@ class DevMarkJobDonePermission(BasePermission):
         ):
             return True
         return False
+
+class DevCanApply(BasePermission):
+        def has_permission(self, request, view):
+            print(request.user.developer.can_apply)
+            if request.user.developer.can_apply == True:
+                return True
+            return False

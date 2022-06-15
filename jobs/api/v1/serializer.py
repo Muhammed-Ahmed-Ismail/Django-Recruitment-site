@@ -24,3 +24,7 @@ class JobSerializer(serializers.ModelSerializer):
 #         'status' ,
 # ]
 
+class JobApplicationSeriaizer(serializers.Serializer):
+
+    class Meta:
+        fields = ['developer_id','']
