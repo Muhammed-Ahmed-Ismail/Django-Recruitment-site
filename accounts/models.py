@@ -53,6 +53,9 @@ class Developer(models.Model):
             return
         pass
 
+    def __str__(self):
+        return self.user.username
+
 
 class Company(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE, null=True)

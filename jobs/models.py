@@ -51,6 +51,7 @@ class Job(models.Model):
     created_by = models.ForeignKey(Company, on_delete=models.CASCADE)
     applied_developer = models.ManyToManyField('accounts.developer', blank=True)
 
+
     def add_new_application(self, developer):
         self.applied_developer.add(developer)
         self.save()
