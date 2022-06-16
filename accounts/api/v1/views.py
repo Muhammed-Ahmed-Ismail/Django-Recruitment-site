@@ -1,8 +1,12 @@
+import profile
 from rest_framework import status
 from rest_framework.response import Response
-from .serializers import CreateCompanySerializer, CreateDeveloperSerializer, CreateUserSerializer
+from .serializers import CreateCompanySerializer, CreateDeveloperSerializer, CreateUserSerializer, UserSerializerForDeveloper, UserSerializerForCompany
 from rest_framework.decorators import api_view, permission_classes
+from django.contrib.auth import get_user_model
+from accounts.models import Developer,Company
 
+User = get_user_model()
 
 @api_view(['POST'])
 @permission_classes([])
@@ -51,3 +55,19 @@ def signup(request):
             response['data'] = serializer.errors
     print(Response(**response))
     return Response(**response)
+
+@api_view(['POST'])
+def getProfile(request):
+    response = {'data': None, 'status': status.HTTP_400_BAD_REQUEST}
+    profile = User.objects.get(pk = request.user.id)
+    print(profile)
+
+    if(profile.user_type == 'DEVELOPER'):
+        serial = UserSerializerForDeveloper(profile, many=False)
+        return Response(data=serial.data, status=status.HTTP_200_OK)
+
+    elif(profile.user_type == 'COMPANY'):
+        serial = UserSerializerForCompany(profile, many=False)
+        return Response(data=serial.data, status=status.HTTP_200_OK)
+    return Response(**response)
+    

@@ -2,15 +2,16 @@ from django.core.exceptions import ObjectDoesNotExist
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
+from rest_framework import status
 
 from accounts.api.v1.permissions import CompEditMyJopPermission, CompCreateJobPermission, DevApplyForJobPermission, \
     DevCanApply
 from accounts.models import Developer
 from jobs.models import Job
-from jobs.api.v1.serializer import JobSerializer
 
-# from jobs.api.v1.Notifications import Notifications
-from rest_framework import status
+from jobs.api.v1.serializer import JobSerializer, JobCreateEditSerializer
+from jobs.api.v1.Notifications import Notifications
+
 
 
 @api_view(['GET'])
@@ -48,7 +49,8 @@ def detail(request, job_id):
 def create(request):
     response = {'data': {}, 'status': status.HTTP_400_BAD_REQUEST}
     try:
-        serializer = JobSerializer(data=request.data)
+        serializer = JobCreateEditSerializer(data=request.data)
+        print(serializer)
         if serializer.is_valid():
             serializer.save()
             response['data'] = serializer.data
@@ -86,9 +88,9 @@ def edit(request, job_id):
         job_instance = Job.objects.get(id=job_id)
 
         if request.method == 'PUT':
-            serializer = JobSerializer(instance=job_instance, data=request.data)
+            serializer = JobCreateEditSerializer(instance=job_instance, data=request.data)
         else:  # PATCH
-            serializer = JobSerializer(instance=job_instance, data=request.data, partial=True)
+            serializer = JobCreateEditSerializer(instance=job_instance, data=request.data, partial=True)
 
         if serializer.is_valid():
             serializer.save()
