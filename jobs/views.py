@@ -26,7 +26,7 @@ def create(request):
 
     query_set=Job.objects.create(
         name=body['name'],
-        Description= body['Description'],
+        Drescription= body['Description'],
         # Tags = body['tags'],
         developer = body['developer'],
         created_by = body['created_by']
