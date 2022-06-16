@@ -32,7 +32,6 @@ class Job(models.Model):
     creation_time = models.DateTimeField(auto_now_add=True)
     Modification_time = models.DateTimeField(auto_now=True)
     Description = models.TextField(max_length=255)
-    created_by = models.ForeignKey(Company, on_delete=models.CASCADE)
     status = models.CharField(
         max_length=2,
         choices=Status.choices,
@@ -50,7 +49,7 @@ class Job(models.Model):
 
     image = models.CharField(max_length=255, default='https://dummyimage.com/200x300/000/ffffff')
     created_by = models.ForeignKey(Company, on_delete=models.CASCADE)
-    applied_developer = models.ManyToManyField('accounts.developer', null=True, blank=True)
+    applied_developer = models.ManyToManyField('accounts.developer', blank=True)
 
     def add_new_application(self, developer):
         self.applied_developer.add(developer)
