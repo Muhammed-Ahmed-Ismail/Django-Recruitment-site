@@ -10,7 +10,6 @@ from accounts.models import Developer
 from jobs.models import Job
 
 from jobs.api.v1.serializer import JobSerializer, JobCreateEditSerializer
-from jobs.api.v1.Notifications import Notifications
 
 
 
