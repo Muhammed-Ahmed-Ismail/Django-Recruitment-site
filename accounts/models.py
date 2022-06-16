@@ -2,6 +2,8 @@ from django.contrib.auth.models import AbstractUser
 # from jobs.models import Job
 from django.db import models
 
+from .Notifications import send_acceptance_mail, send_rejection_mail
+
 
 class User(AbstractUser):
     class Types(models.TextChoices):
@@ -25,6 +27,7 @@ class Developer(models.Model):
     tags = models.ManyToManyField('tags.tag')
     can_apply = models.BooleanField(default=True)
     notify_by_mail = models.BooleanField(null=True, default=True)
+    notifications = models.ManyToManyField('notifications.notification')
 
     def apply(self, job):
         self.can_apply = False
