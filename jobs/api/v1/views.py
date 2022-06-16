@@ -4,15 +4,18 @@ from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
 from rest_framework import status
 
-from accounts.api.v1.permissions import CompEditMyJopPermission, CompCreateJobPermission
+from accounts.api.v1.permissions import CompEditMyJopPermission, CompCreateJobPermission, DevApplyForJobPermission, \
+    DevCanApply
+from accounts.models import Developer
 from jobs.models import Job
+
 from jobs.api.v1.serializer import JobSerializer, JobCreateEditSerializer
 from jobs.api.v1.Notifications import Notifications
 
 
+
 @api_view(['GET'])
 @permission_classes([])
-
 def index(request):
     try:
         queryset = Job.objects.all()
@@ -41,8 +44,6 @@ def detail(request, job_id):
         return Response(**response)
 
 
-
-
 @api_view(['POST'])
 @permission_classes([IsAuthenticated, CompCreateJobPermission])
 def create(request):
@@ -63,21 +64,20 @@ def create(request):
         return Response(**response)
 
 
-    query_set=Job.objects.create(
-        # status='O',
-        name=body['name'],
-        Description= body['Description'],
-        # Tags = body['tags'],
-        # developer = body['developer'],
-        ## ^^ notify accepted developer and all the others notify with rejection
-        # created_by = body['created_by']
-    )
-    serializer=JobSerializer(query_set)
-##########send notification to all developers who have matched tags
-    notifications = Notifications()
-    # notifications.send_mail_to_devs_w_matching_tags(Tags)
-    return Response(serializer.data)
-
+#     query_set=Job.objects.create(
+#         # status='O',
+#         name=body['name'],
+#         Description= body['Description'],
+#         # Tags = body['tags'],
+#         # developer = body['developer'],
+#         ## ^^ notify accepted developer and all the others notify with rejection
+#         # created_by = body['created_by']
+#     )
+#     serializer=JobSerializer(query_set)
+# ##########send notification to all developers who have matched tags
+#     notifications = Notifications()
+#     # notifications.send_mail_to_devs_w_matching_tags(Tags)
+#     return Response(serializer.data)
 
 
 @api_view(['PUT', 'PATCH'])
@@ -116,5 +116,46 @@ def delete(request, actor_id):
     except ObjectDoesNotExist:
         response['data'] = {'not found'}
         response['status'] = status.HTTP_404_NOT_FOUND
+    finally:
+        return Response(**response)
+
+
+@api_view(['POST'])
+@permission_classes([IsAuthenticated, DevApplyForJobPermission, DevCanApply])
+def apply(request, job_id):
+    response = {'data': {}, 'status': status.HTTP_404_NOT_FOUND}
+    try:
+        job = Job.objects.get(id=job_id)
+        applying_developer = request.user.developer
+        applying_developer.apply(job)
+        response['data'] = {'Application succeeded'}
+        response['status'] = status.HTTP_200_OK
+    except ObjectDoesNotExist:
+        response['data'] = {'not found'}
+        response['status'] = status.HTTP_204_NO_CONTENT
+    except:
+        response['data'] = {'server error'}
+        response['status'] = status.HTTP_500_INTERNAL_SERVER_ERROR
+    finally:
+        return Response(**response)
+
+
+@api_view(['POST'])
+@permission_classes([IsAuthenticated, CompEditMyJopPermission])
+def assign(request, job_id, dev_id):
+    response = {'data': {}, 'status': status.HTTP_404_NOT_FOUND}
+    try:
+        job = Job.objects.get(id=job_id)
+        developer = job.applied_developer.get(id=dev_id)
+        print(developer)
+        job.assign_to_developer(developer)
+        response['data'] = {'Developer has been sent a mail for acceptance'}
+        response['status'] = status.HTTP_200_OK
+    except ObjectDoesNotExist:
+        response['data'] = {'not found'}
+        response['status'] = status.HTTP_204_NO_CONTENT
+    except:
+        response['data'] = {'server error'}
+        response['status'] = status.HTTP_500_INTERNAL_SERVER_ERROR
     finally:
         return Response(**response)

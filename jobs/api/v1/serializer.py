@@ -12,7 +12,14 @@ class JobSerializer(serializers.ModelSerializer):
         fields = '__all__'
         depth = 2
 
+
+class JobApplicationSeriaizer(serializers.Serializer):
+
+    class Meta:
+        fields = ['developer_id','']
+
 class JobCreateEditSerializer(serializers.ModelSerializer):
     class Meta:
         model = Job
         fields = ('name', 'Description', 'image', 'created_by', 'status',)
+
