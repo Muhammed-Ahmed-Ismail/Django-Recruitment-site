@@ -26,6 +26,8 @@ def signup(request):
                 user = serializer.save()
                 developer.user = user
                 developer.save()
+                print(request.data['tags'])
+                # developer.tags.set(re)
                 response['data'] = [serializer.data, developer_serializer.data]
                 response['status'] = status.HTTP_201_CREATED
             else:

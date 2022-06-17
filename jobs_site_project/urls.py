@@ -21,6 +21,7 @@ urlpatterns = [
 
     path('jobs/', include('jobs.api.v1.urls')),
     path('tags/', include('tags.api.v1.urls')),
+    path('notifications/', include('notifications.api.v1.urls')),
 
     path('accounts/', include('accounts.api.v1.urls')),
     path('accounts/', include('django.contrib.auth.urls')),

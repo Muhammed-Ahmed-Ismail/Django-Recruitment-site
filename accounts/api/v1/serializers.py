@@ -52,7 +52,7 @@ class CreateDeveloperSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Developer
-        fields = ['cv']
+        fields = ['cv','tags']
         extra_kwargs = {
             'cv': {
                 'required': True
@@ -60,20 +60,20 @@ class CreateDeveloperSerializer(serializers.ModelSerializer):
         }
         # depth = 1
 
-    def create(self, validated_data):
-        developer = Developer(
-            cv=validated_data['cv'],
-
-        )
-
-        # user = User(**validated_data)
-        print('frrsd')
-        # user.set_password(validated_data['password'])
-        # developer.user.set(validated_data['user'])
-        developer.save()
-        # developer.tags.set(validated_data['tags'])
-
-        return developer
+    # def create(self, validated_data):
+    #     developer = Developer(
+    #         cv=validated_data['cv'],
+    #
+    #     )
+    #
+    #     # user = User(**validated_data)
+    #     print('frrsd')
+    #     # user.set_password(validated_data['password'])
+    #     # developer.user.set(validated_data['user'])
+    #     developer.save()
+    #     # developer.tags.set(validated_data['tags'])
+    #
+    #     return developer
 
 
 class CreateCompanySerializer(serializers.ModelSerializer):
