@@ -58,7 +58,7 @@ def signup(request):
     print(Response(**response))
     return Response(**response)
 
-@api_view(['POST'])
+@api_view(['GET'])
 def getProfile(request):
     response = {'data': None, 'status': status.HTTP_400_BAD_REQUEST}
     profile = User.objects.get(pk = request.user.id)

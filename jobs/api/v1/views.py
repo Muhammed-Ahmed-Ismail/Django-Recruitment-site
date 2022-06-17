@@ -14,7 +14,7 @@ from jobs.api.v1.serializer import JobSerializer, JobCreateEditSerializer
 
 
 @api_view(['GET'])
-@permission_classes([])
+@permission_classes([IsAuthenticated])
 def index(request):
     try:
         queryset = Job.objects.all()
