@@ -49,7 +49,7 @@ def create(request):
     response = {'data': {}, 'status': status.HTTP_400_BAD_REQUEST}
     try:
         serializer = JobCreateEditSerializer(data=request.data)
-        print(serializer)
+        print(request.data)
         if serializer.is_valid():
             serializer.save()
             response['data'] = serializer.data
@@ -146,7 +146,7 @@ def assign(request, job_id, dev_id):
     try:
         job = Job.objects.get(id=job_id)
         developer = job.applied_developer.get(id=dev_id)
-        print(developer)
+
         job.assign_to_developer(developer)
         response['data'] = {'Developer has been sent a mail for acceptance'}
         response['status'] = status.HTTP_200_OK

@@ -50,7 +50,7 @@ class Job(models.Model):
     image = models.CharField(max_length=255, default='https://dummyimage.com/200x300/000/ffffff')
     created_by = models.ForeignKey(Company, on_delete=models.CASCADE)
     applied_developer = models.ManyToManyField('accounts.developer', blank=True)
-
+    tags = models.ManyToManyField('tags.tag')
 
     def add_new_application(self, developer):
         self.applied_developer.add(developer)

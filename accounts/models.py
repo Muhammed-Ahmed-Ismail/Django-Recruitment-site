@@ -3,6 +3,8 @@ from django.contrib.auth.models import AbstractUser
 from django.db import models
 
 from .Notifications import send_acceptance_mail, send_rejection_mail
+from notifications.models import Notification
+
 
 
 class User(AbstractUser):
@@ -40,7 +42,7 @@ class Developer(models.Model):
         self.save()
 
     def get_accepted(self):
-        print('getaccepted',self.user.email)
+        print('getaccepted', self.user.email)
         send_acceptance_mail(self.user.email)
         pass
 
@@ -48,13 +50,23 @@ class Developer(models.Model):
         self.free()
         send_rejection_mail(self.user.email)
 
-    def notify(self):
-        if not self.notify_by_mail:
-            return
-        pass
+    def notify(self,notification):
+        # if not self.notify_by_mail:
+        #     pass
+        # notification = Notification.objects.create(name="Job is created",message=f'{job.name} is created')
+        self.notifications.add(notification)
+
+
 
     def __str__(self):
         return self.user.username
+
+    def __hash__(self):
+        return hash((self.user.username))
+
+    def __eq__(self, other):
+        if not isinstance(other, type(self)): return NotImplemented
+        return self.user.username == other.user.username
 
 
 class Company(models.Model):
