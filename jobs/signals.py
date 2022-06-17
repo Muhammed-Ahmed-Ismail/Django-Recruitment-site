@@ -18,7 +18,7 @@ from notifications.models import Notification
 #         # print(developers_to_notify)
 @receiver(m2m_changed, sender=Job.tags.through)
 def jop_post_save_action(sender, instance, action, **kwargs):
-    print('ASASA',Notification.objects.all())
+    # print('ASASA',Notification.objects.all())
 
     # notification = Notification.objects.create(name="New Job", message="sdasdas")
     if action == 'post_add':

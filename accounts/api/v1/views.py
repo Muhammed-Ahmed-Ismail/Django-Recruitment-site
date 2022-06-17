@@ -12,7 +12,7 @@ User = get_user_model()
 @permission_classes([])
 def signup(request):
     response = {'data': None, 'status': status.HTTP_400_BAD_REQUEST}
-    print(request.data)
+    # print(request.data)
     if (request.data['user_type'] == 'DEVELOPER'):
 
         serializer = CreateUserSerializer(data=request.data)

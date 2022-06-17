@@ -58,6 +58,13 @@ class Job(models.Model):
 
     def assign_to_developer(self, developer):
         print('from assign',developer)
+        self.status='IN'
+        print(self.applied_developer.all())
+        
+        self.applied_developer.set( [developer])
+        self.save()
+        print(self.applied_developer)
+       
         refused_developers = list(filter(lambda d: d.id != developer.id, self.applied_developer.all()))
         developer.get_accepted()
         for developer in refused_developers:

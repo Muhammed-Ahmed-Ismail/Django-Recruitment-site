@@ -23,6 +23,15 @@ def index(request):
     except:
         return Response({"status": "No jobs exist"}, status=status.HTTP_404_NOT_FOUND)
 
+@api_view(['GET'])
+@permission_classes([IsAuthenticated , CompCreateJobPermission])
+def my_jobs(request):
+    try:
+        queryset = request.user.company.job_set.all()
+        serializer = JobSerializer(queryset, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+    except:
+        return Response({"status": "No jobs exist"}, status=status.HTTP_404_NOT_FOUND)
 
 @api_view(['GET'])
 @permission_classes([])

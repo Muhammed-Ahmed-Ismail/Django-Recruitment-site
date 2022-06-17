@@ -113,18 +113,19 @@ class CreateCompanySerializer(serializers.ModelSerializer):
 class GetDeveloperSerializer(serializers.ModelSerializer):
     class Meta:
         model = Developer
-        fields = ['cv']
+        fields = ['id','cv','can_apply']
 
 class UserSerializerForDeveloper(serializers.ModelSerializer):
     developer = GetDeveloperSerializer()
     class Meta:
         model = User
         fields = ['username','first_name','last_name','last_login','email','user_type','gender','date_of_birth','developer']
+        debth = 1
 
 class GetCompanySerializer(serializers.ModelSerializer):
     class Meta:
         model = Company
-        fields = ['history','address']
+        fields = ['id','history','address']
 
 class UserSerializerForCompany(serializers.ModelSerializer):
     company = GetCompanySerializer()
