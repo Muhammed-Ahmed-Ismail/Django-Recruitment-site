@@ -25,7 +25,7 @@ def index(request):
 
 @api_view(['GET'])
 @permission_classes([IsAuthenticated , CompCreateJobPermission])
-def my_jobs(request):
+def get_my_jobs(request):
     try:
         queryset = request.user.company.job_set.all()
         serializer = JobSerializer(queryset, many=True)
@@ -167,3 +167,24 @@ def assign(request, job_id, dev_id):
         response['status'] = status.HTTP_500_INTERNAL_SERVER_ERROR
     finally:
         return Response(**response)
+
+
+@api_view(['POST'])
+@permission_classes([IsAuthenticated, CompEditMyJopPermission])
+def finish_job(request, job_id):
+    response = {'data': {}, 'status': status.HTTP_404_NOT_FOUND}
+    try:
+        job = Job.objects.get(id=job_id)
+        print(job)
+        job.mark_finish()
+        response['data'] = {'Developer has been sent a mail for acceptance'}
+        response['status'] = status.HTTP_200_OK
+    except ObjectDoesNotExist:
+        response['data'] = {'not found'}
+        response['status'] = status.HTTP_204_NO_CONTENT
+    except:
+        response['data'] = {'server error'}
+        response['status'] = status.HTTP_500_INTERNAL_SERVER_ERROR
+    finally:
+        return Response(**response)
+

@@ -70,3 +70,11 @@ class Job(models.Model):
         for developer in refused_developers:
             developer.get_rejected()
         pass
+
+    def mark_finish(self):
+        print('in finish')
+        self.status = 'F'
+        self.applied_developer.all().first().free()
+        print(self.applied_developer)
+        self.applied_developer.set([])    
+        self.save()
